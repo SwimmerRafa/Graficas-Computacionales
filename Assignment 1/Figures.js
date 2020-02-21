@@ -215,10 +215,10 @@ function createRhombus(gl)
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
     let verts= [
-        0.0,  .5,  0.0,
-        0.5, .0,  0.0,
-        0.0,  -.5,  0.0,
-        -.5, 0.0,  0.0,
+        0.0,  .6,  0.0,
+        0.6, .0,  0.0,
+        0.0,  -.6,  0.0,
+        -.6, 0.0,  0.0,
 
     ];
 
@@ -230,6 +230,24 @@ function createRhombus(gl)
 
 function createSphere(gl, radius)
 {
-    var sphere = {};
+    let vertexBuffer;
+    vertexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer)
+
+    var noOfFans = 80;
+    var middle = Math.PI / 6;
+    var vertCount = 2;
+    var angle = (Math.PI - middle) / noOfFans;
+    var vertices=[];
+
+    vertices.push(0.5, 0.4)
+    for(var i = 0; i <= noOfFans; i++){
+        vertices.push(Math.cos(2 * angle * i + middle) + radius);
+        vertices.push(Math.sin(2 * angle * i + middle) + radius);
+    }
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)
+
+    let sphere = {buffer:vertexBuffer, vertSize:2 ,nVerts: vertices.length / vertCount, primtype:gl.TRIANGLE_FAN};
     return sphere;
 }        
