@@ -7,6 +7,8 @@ var shaderProgram, shaderVertexPositionAttribute, shaderVertexColorAttribute,
 
 var duration = 5000; // ms
 
+var move = false;
+
 // Attributes: Input variables used in the vertex shader. Since the vertex shader is called on each vertex, these will be different every time the vertex shader is invoked.
 // Uniforms: Input variables for both the vertex and fragment shaders. These do not change values from vertex to vertex.
 // Varyings: Used for passing data from the vertex shader to the fragment shader. Represent information for which the shader can output different value for each vertex.
@@ -385,6 +387,18 @@ function createOcta(gl, translation, rotationAxis) {
         let angle = Math.PI * 2 * fract;
 
         mat4.rotate(this.modelViewMatrix, this.modelViewMatrix, angle, rotationAxis);
+
+        if(move){
+            mat4.translate(this.modelViewMatrix, this.modelViewMatrix, [0, 0.1, 0]);
+        }else{
+            mat4.translate(this.modelViewMatrix, this.modelViewMatrix, [0, -0.1, 0]);
+        }
+
+        if(this.modelViewMatrix[13] >= 2){
+            move= false;
+        }else if(this.modelViewMatrix[13] <= -2){
+            move = true;
+        }
     };
 
     return octa;
