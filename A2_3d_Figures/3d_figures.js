@@ -187,7 +187,7 @@ function createPyramid(gl, translation, rotationAxis){
     return pyramid;
 }
 
-function createDode(gl, translation, rotationAxis) {
+function createDode(gl, translation, rotationAxis, rotationAxis2) {
     let vertexBuffer;
     vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -283,7 +283,7 @@ function createDode(gl, translation, rotationAxis) {
         let angle = Math.PI * 2 * fract;
 
         mat4.rotate(this.modelViewMatrix, this.modelViewMatrix, angle, rotationAxis);
-        //mat4.rotate(this.modelViewMatrix, this.modelViewMatrix, angle, rotationAxis2)
+        mat4.rotate(this.modelViewMatrix, this.modelViewMatrix, angle, rotationAxis2)
     };
 
     return dedo;
