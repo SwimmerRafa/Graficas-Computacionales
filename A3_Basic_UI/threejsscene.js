@@ -18,6 +18,7 @@ let currentTime = Date.now();
 let mainGroup = null;
 let indexLast = 0;
 
+let indexClick = 0;
 
 function animate() 
 {
@@ -216,32 +217,35 @@ function satDonut(){
 
 
 function addFigure (){
-    let randomIndex = Math.floor(Math.random()* 4   );
+    //En el caso de querer agregar figuras en orden aleatorio.
+    //let randomIndex = Math.floor(Math.random()* 4   );
     let fig = null;
+    indexClick += 1;
     let random = (Math.random() * (+maxX - +minX)) + +minX;
     let random2 = (Math.random() * (+maxY - +minY)) + +minY;
     let random3 = (Math.random() * (+maxZ - +minZ)) + +minZ;
 
-    if (randomIndex === 0){
+    if (indexClick === 1){
         fig = creSphere();
         fig.position.set(random, random2, random3);
     }
-    else if (randomIndex === 1){
+    else if (indexClick === 2){
         fig = crTube();
         fig.position.set(random, random2, random3);
     }
-    else if (randomIndex === 2){
+    else if (indexClick === 3){
         fig = crDonut();
         fig.position.set(random, random2, random3);
     }
-    else if (randomIndex === 3){
+    else if (indexClick === 4){
         fig = crIco();
         fig.position.set(random, random2, random3);
+        indexClick = 0;
     }
 
     mainGroup.add( fig );
     scene.add( mainGroup );
-    indexLast += 1;
+
 }
 function addSatelite() {
     let randomIndex = Math.floor(Math.random()* 4);
