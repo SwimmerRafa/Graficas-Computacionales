@@ -323,5 +323,7 @@ function resetScene() {
     for(let i = mainGroup.children.length; 0 <= i; i--){
         mainGroup.remove(mainGroup.children[i]);
     }
-    $("#rotation").html("rotation: " + mainGroup.rotation.x.toFixed(1)  + mainGroup.rotation.y.toFixed(1) + ",0");
+    mainGroup.rotation.x = 0;
+    mainGroup.rotation.y = 0;
+    $("#rotation").html("rotation: " + mainGroup.rotation.x.toFixed(1)  + ", "+ mainGroup.rotation.y.toFixed(1));
 }

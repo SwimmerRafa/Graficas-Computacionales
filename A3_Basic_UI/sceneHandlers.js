@@ -6,7 +6,7 @@ let mouseUp = false, pageY = 0;
 function rotateScene(deltax, deltay, group) {
     group.rotation.y += deltax / 100;
     group.rotation.x += deltay / 100;
-    $("#rotation").html("rotation: " + group.rotation.x.toFixed(1)  + group.rotation.y.toFixed(1) + ",0");
+    $("#rotation").html("rotation: " + group.rotation.x.toFixed(1) + ", "+ group.rotation.y.toFixed(1));
 }
 
 function scaleScene(scale, group) {
