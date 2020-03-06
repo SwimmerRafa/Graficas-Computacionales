@@ -118,7 +118,7 @@ function crIco(){
 function crTube() {
     geometry = new THREE.OctahedronGeometry(1, 0);
     //Material
-    let textureUrl3 = "../images/maya.jpg";
+    let textureUrl3 = "../images/lava.jpg";
     let texture3 = new THREE.TextureLoader().load(textureUrl3);
     let material3 = new THREE.MeshPhongMaterial({map: texture3});
     // Put the geometry and material together into a mesh
@@ -148,7 +148,7 @@ function crDonut(){
 function satSphere() {
     let geometry = new THREE.SphereGeometry(0.5, 20, 20);
     //Material
-    let textureUrl = "../images/earth_atmos_2048.jpg";
+    let textureUrl = "../images/moon_1024.jpg";
     let texture = new THREE.TextureLoader().load(textureUrl);
     let material = new THREE.MeshPhongMaterial({map: texture});
     // Put the geometry and material together into a mesh
@@ -167,7 +167,7 @@ function satIco() {
 
     geometry = new THREE.IcosahedronGeometry(.5, 0);
     //Material
-    let textureUrl2 = "../images/stone.jpg";
+    let textureUrl2 = "../images/moon_1024.jpg";
     let texture2 = new THREE.TextureLoader().load(textureUrl2);
     let material2 = new THREE.MeshPhongMaterial({map: texture2});
     // Put the geometry and material together into a mesh
@@ -183,7 +183,7 @@ function satIco() {
 function satTube() {
     geometry = new THREE.OctahedronGeometry(.5, 0);
     //Material
-    let textureUrl3 = "../images/maya.jpg";
+    let textureUrl3 = "../images/moon_1024.jpg";
     let texture3 = new THREE.TextureLoader().load(textureUrl3);
     let material3 = new THREE.MeshPhongMaterial({map: texture3});
     // Put the geometry and material together into a mesh
@@ -200,7 +200,7 @@ function satTube() {
 function satDonut(){
     geometry = new THREE.TorusGeometry(0.2, 0.2, 8, 100);
     //Material
-    let textureUrl4 = "../images/donut.jpg";
+    let textureUrl4 = "../images/moon_1024.jpg";
     let texture4 = new THREE.TextureLoader().load(textureUrl4);
     let material4 = new THREE.MeshPhongMaterial({ map: texture4 });
     // Put the geometry and material together into a mesh
