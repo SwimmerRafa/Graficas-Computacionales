@@ -4,8 +4,8 @@ camera = null;
 let maxY = 2;
 let minY = -2;
 
-let minX = -5;
-let maxX = 5;
+let minX = -6;
+let maxX = 8;
 
 let maxZ = 0;
 let minZ = -50,
@@ -310,7 +310,7 @@ function addSatelite() {
             fig.position.set(random, random2, random3);
             obj.add(fig);
 
-            if (indexLast == 0){
+            if (indexLast === 0){
                 indexLast = mainGroup.children.length;
             } else{
                 indexLast--;
@@ -323,5 +323,5 @@ function resetScene() {
     for(let i = mainGroup.children.length; 0 <= i; i--){
         mainGroup.remove(mainGroup.children[i]);
     }
-
+    $("#rotation").html("rotation: " + mainGroup.rotation.x.toFixed(1)  + mainGroup.rotation.y.toFixed(1) + ",0");
 }
