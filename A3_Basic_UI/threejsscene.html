@@ -28,6 +28,13 @@
 				
 		        // Run the run loop
 		        run();
+
+		        //Calling functions of all buttons
+		        document.getElementById('add').onclick = function() {addFigure()}
+
+				document.getElementById('satelite').onclick = function() {addSatelite()}
+
+				document.getElementById('reset').onclick = function () {resetScene()}
 			}
 	);
 
@@ -37,12 +44,15 @@
 <body>
 
 	<div id="container">
-	    <canvas id="webglcanvas" width=800 height=600></canvas>
+	    <canvas id="webglcanvas" width=1080 height=600></canvas>
 		<div id="title">
 			Three.js Scene Graph/Transform Hierarchy
 		</div>
 		<div id="prompt">
 			Drag the mouse to rotate the scene<br>Drag the slider to scale.
+			<button id ="add">Add Figure</button>
+			<button id ="satelite">Add Satelite</button>
+			<button id ="reset">Reset Scene</button>
 		</div>
 	    <div id="status">
 		    <div id="rotation">rotation: 0,0,0</div>
