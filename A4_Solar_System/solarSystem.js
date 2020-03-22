@@ -1,11 +1,19 @@
 // https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial
+<<<<<<< HEAD
 let camera, controls, scene, renderer, raycaster;
 let mouse = new THREE.Vector2();
 let geometry, material3D, solarSystem, sunGroup, startPoint, asteroidBelt, endPoint, planet, sun, uniforms;
+=======
+
+let camera, controls, scene, renderer, raycaster;
+let mouse = new THREE.Vector2();
+let geometry, solarSystem, sunGroup, startPoint, endPoint, planet, sun, uniforms;
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
 let duration =  10000; // ms
 let currentTime = Date.now();
 
 // Groups of every planet
+<<<<<<< HEAD
 let sizePlanet = [15, 30, 33, 25, 60, 50, 40, 38, 13];
 let groupPlanet = {};
 
@@ -34,6 +42,29 @@ let ringColorMap = ["../images/saturnring.jpg", "../images/uranusring.jpg"];
 let ringBumpMap = ["../images/saturnring.gif", "../images/uranusringtrans.gif"];
 
 function animate() {
+=======
+let sizePlanet = [20, 34, 35, 23, 69, 57, 49, 45, 21];
+let groupPlanet = {};
+
+let colorMap = ["./images/mercurymap.jpg", "./images/venusmap.jpg", "./images/earthmap.jpg",
+    "./images/marsmap.jpg", "./images/jupitermap.jpg", "./images/saturnmap.jpg", "./images/uranusmap.jpg",
+    "./images/neptunemap.jpg", "./images/plutomap.jpg"];
+
+let bumpMap = ["./images/mercurybump.jpg", "./images/venusbump.jpg", "./images/earthbump.jpg",
+    "./images/marsbump.jpg", "./images/jupiterBump.jpg", "./images/saturnbump.jpg", "./images/uranusbump.jpg",
+    "./images/neptunebump.jpg", "./images/plutobump.jpg"];
+
+let satelitesColorMap = ["./images/moonmap1k.jpg", "./images/deimosbump.jpg", "./images/phobosbump.jpg"];
+
+let satelitesBumpMap = ["./images/moonbump1k.jpg", "./images/deimosbump.jpg", "./images/phobosbump.jpg"];
+
+let ringColorMap = ["./images/saturnringcolor.jpg", "./images/uranusringcolour.jpg"];
+
+let ringBumpMap = ["./images/saturnringpattern.gif", "./images/uranusringtrans.gif"];
+
+function animate()
+{
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
     let now = Date.now();
     let deltat = now - currentTime;
     currentTime = now;
@@ -58,6 +89,7 @@ function animate() {
     groupPlanet[2].children[1].children[0].rotation.x += angle;
     groupPlanet[3].children[1].rotation.x += angle + angle;
     groupPlanet[3].children[2].rotation.y += angle + angle;
+<<<<<<< HEAD
     //Jupyter
     groupPlanet[4].children[1].rotation.x += angle + 32;
     groupPlanet[4].children[2].rotation.y += angle -4;
@@ -72,6 +104,8 @@ function animate() {
     //Neptune
     groupPlanet[7].children[1].rotation.x += angle * angle;
 
+=======
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
 
     // Rotations of every planet
     groupPlanet[0].children[0].rotation.x += angle;
@@ -108,10 +142,16 @@ function render() {
     // update the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
     renderer.render(scene, camera);
+<<<<<<< HEAD
     asteroidBelt.rotation.y += 0.0010;
 }
 
 function createScene(canvas)
+=======
+}
+
+function createScene(canvas) 
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
 {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -126,9 +166,13 @@ function createScene(canvas)
 
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera( 45, canvas.width / canvas.height, 1, 100000 );
+<<<<<<< HEAD
     camera.position.y = 300;
     camera.position.z = 500;
     camera.lookAt(scene.position);
+=======
+    camera.position.z = 270;
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
     scene.add(camera);
 
     //Controles
@@ -144,7 +188,10 @@ function createScene(canvas)
     light.position.set(0, 0, 0);
     solarSystem.add(light);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
     //Añadir Sol
     let GLOWMAP = new THREE.TextureLoader().load("../images/sunmap.jpg");
     let NOISEMAP = new THREE.TextureLoader().load("../images/noisy-texture.png");
@@ -165,7 +212,11 @@ function createScene(canvas)
         transparent:true,
     } );
 
+<<<<<<< HEAD
     geometry = new THREE.SphereGeometry(150, 32, 32);
+=======
+    geometry = new THREE.SphereGeometry(100, 32, 32);
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
     sun = new THREE.Mesh(geometry, material);
     sun.position.x = 0;
     sun.position.y = 0;
@@ -175,6 +226,7 @@ function createScene(canvas)
     solarSystem.add(sunGroup);
 
     //Add all planets
+<<<<<<< HEAD
     let spacePlanet = 200;
     for (let i = 0; i < 9; i++) {
         geometry = new THREE.SphereGeometry(sizePlanet[i], 32, 32);
@@ -182,12 +234,28 @@ function createScene(canvas)
         planet = new THREE.Mesh(geometry, material3D);
         planet.position.set(spacePlanet * (i + 1), 0, spacePlanet * (i + 1));
         groupPlanet[i] = new THREE.Object3D;
+=======
+    let spacePlanet = 100;
+    for (var i = 0; i < 9; i++) {
+        // Create and unified the material with the geometry of every planet
+        geometry = new THREE.SphereGeometry(sizePlanet[i], 32, 32);
+        material3D = loadTextureMaterial(colorMap[i], bumpMap[i]);
+        // material = new THREE.MeshBasicMaterial({ color: 0xCDF409 });
+        planet = new THREE.Mesh(geometry, material3D);
+        planet.position.set(spacePlanet * (i + 1), 0, spacePlanet * (i + 1));
+        groupPlanet[i] = new THREE.Object3D;
+        // groupPlanet[i].position.set(spacePlanet * (i + 1), 0, spacePlanet * (i + 1))
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
         groupPlanet[i].add(planet);
         solarSystem.add(groupPlanet[i]);
 
         // Create a start and end point of every planet
         startPoint = new THREE.Vector3(0, 0, 0);
+<<<<<<< HEAD
         endPoint = new THREE.Vector3(spacePlanet * (i +1) , 0 , spacePlanet * (i +1) );
+=======
+        endPoint = new THREE.Vector3(spacePlanet * (i + 1), 0, spacePlanet * (i + 1));
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
 
         //Orbits
         geometry = new THREE.CircleGeometry(startPoint.distanceTo(endPoint), 128);
@@ -198,6 +266,7 @@ function createScene(canvas)
         scene.add(orbit);
     }
 
+<<<<<<< HEAD
     //Asteroids
     asteroidBelt = new THREE.Object3D();
     solarSystem.add(asteroidBelt);
@@ -220,6 +289,8 @@ function createScene(canvas)
     let numberPlanetRings = [5, 6];
     createSatelites(numberPlanetSatelites);
     createRings(numberPlanetRings);
+=======
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
 
     ///Add all to scene
     scene.add(solarSystem);
@@ -230,6 +301,7 @@ function createScene(canvas)
 function loadTextureMaterial(color_map_texture, bump_map_texture) {
     var TEXTUREMAP = new THREE.TextureLoader().load(color_map_texture);
     var BUMPMAP = new THREE.TextureLoader().load(bump_map_texture);
+<<<<<<< HEAD
     materialPhong = new THREE.MeshPhongMaterial({ map: TEXTUREMAP, bumpMap: BUMPMAP, bumpScale: 0.8 });
     return materialPhong;
 }
@@ -261,3 +333,11 @@ function createRings(planetRing) {
         groupPlanet[planetRing[eachPlanetRing]].add(ring)
     }
 }
+=======
+    materialPhong = new THREE.MeshPhongMaterial({ map: TEXTUREMAP, bumpMap: BUMPMAP, bumpScale: 0.8 })
+    return materialPhong;
+}
+
+
+
+>>>>>>> 785e33d4fe805d07dec0049e2a1f07c4afdb2c71
