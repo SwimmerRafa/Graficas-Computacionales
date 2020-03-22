@@ -1,13 +1,17 @@
 // https://threejs.org/docs/index.html#api/en/materials/ShaderMaterial
 let camera, controls, scene, renderer, raycaster;
 let mouse = new THREE.Vector2();
-let geometry, material3D, solarSystem, sunGroup, startPoint, endPoint, planet, sun, satelite, uniforms;
+let geometry, material3D, solarSystem, sunGroup, startPoint, asteroidBelt, endPoint, planet, sun, uniforms;
 let duration =  10000; // ms
 let currentTime = Date.now();
 
 // Groups of every planet
 let sizePlanet = [15, 30, 33, 25, 60, 50, 40, 38, 13];
 let groupPlanet = {};
+
+var AU = 350;
+var asteroidOrbitStart = 280 + (AU * 2),
+    asteroidOrbitEnd = 280 + (AU * 3);
 
 let colorMap = ["../images/mercurymap.jpg", "../images/venusmap.jpg", "../images/earthmap.jpg",
     "../images/marsmap.jpg", "../images/jupitermap.jpg", "../images/saturnmap.jpg", "../images/uranusmap.jpg",
@@ -50,24 +54,21 @@ function animate() {
     groupPlanet[8].rotation.y += (angle + 0.0006) / 4;
 
     // Rotations of satellites
-    //Earth
     groupPlanet[2].children[1].rotation.x += angle + angle;
     groupPlanet[2].children[1].children[0].rotation.x += angle;
-    //Mars
     groupPlanet[3].children[1].rotation.x += angle + angle;
-    groupPlanet[3].children[2].rotation.y += angle * 3;
+    groupPlanet[3].children[2].rotation.y += angle + angle;
     //Jupyter
-    groupPlanet[4].children[1].rotation.x += angle *2;
+    groupPlanet[4].children[1].rotation.x += angle + 32;
     groupPlanet[4].children[2].rotation.y += angle -4;
     groupPlanet[4].children[3].rotation.z += angle ;
-    groupPlanet[4].children[4].rotation.y += angle + angle;
+    groupPlanet[4].children[4].rotation.y += angle * angle;
     //Uranus
-    groupPlanet[6].children[1].rotation.x += angle + angle;
-    groupPlanet[6].children[2].rotation.y += angle + angle;
-    groupPlanet[6].children[3].rotation.x += angle + angle;
-    groupPlanet[6].children[4].rotation.y += angle + angle;
-    groupPlanet[6].children[5].rotation.x += angle + angle;
-    groupPlanet[6].children[6].rotation.y += angle + angle;
+    groupPlanet[6].children[1].rotation.x += angle + 3;
+    groupPlanet[6].children[2].rotation.y += angle + 4;
+    groupPlanet[6].children[3].rotation.x += angle + 5;
+    groupPlanet[6].children[3].rotation.y += angle + 6;
+    groupPlanet[6].children[5].rotation.x += angle + 6;
     //Neptune
     groupPlanet[7].children[1].rotation.x += angle * angle;
 
@@ -107,6 +108,7 @@ function render() {
     // update the camera and mouse position
     raycaster.setFromCamera(mouse, camera);
     renderer.render(scene, camera);
+    asteroidBelt.rotation.y += 0.0010;
 }
 
 function createScene(canvas)
@@ -141,7 +143,7 @@ function createScene(canvas)
     let light = new THREE.SpotLight(0xffffff, 2, 0, 2);
     light.position.set(0, 0, 0);
     solarSystem.add(light);
-    scene.add(light);
+
 
     //Añadir Sol
     let GLOWMAP = new THREE.TextureLoader().load("../images/sunmap.jpg");
@@ -163,7 +165,7 @@ function createScene(canvas)
         transparent:true,
     } );
 
-    geometry = new THREE.SphereGeometry(200, 32, 32);
+    geometry = new THREE.SphereGeometry(150, 32, 32);
     sun = new THREE.Mesh(geometry, material);
     sun.position.x = 0;
     sun.position.y = 0;
@@ -173,21 +175,19 @@ function createScene(canvas)
     solarSystem.add(sunGroup);
 
     //Add all planets
-    let spacePlanet = 100;
+    let spacePlanet = 200;
     for (let i = 0; i < 9; i++) {
         geometry = new THREE.SphereGeometry(sizePlanet[i], 32, 32);
         material3D = loadTextureMaterial(colorMap[i], bumpMap[i]);
-        // material = new THREE.MeshBasicMaterial({ color: 0xCDF409 });
         planet = new THREE.Mesh(geometry, material3D);
         planet.position.set(spacePlanet * (i + 1), 0, spacePlanet * (i + 1));
         groupPlanet[i] = new THREE.Object3D;
-        // groupPlanet[i].position.set(spacePlanet * (i + 1), 0, spacePlanet * (i + 1))
         groupPlanet[i].add(planet);
         solarSystem.add(groupPlanet[i]);
 
         // Create a start and end point of every planet
         startPoint = new THREE.Vector3(0, 0, 0);
-        endPoint = new THREE.Vector3(spacePlanet * (i + 1), 0, spacePlanet * (i + 1));
+        endPoint = new THREE.Vector3(spacePlanet * (i +1) , 0 , spacePlanet * (i +1) );
 
         //Orbits
         geometry = new THREE.CircleGeometry(startPoint.distanceTo(endPoint), 128);
@@ -196,6 +196,23 @@ function createScene(canvas)
         material = new THREE.LineBasicMaterial({ color: 0xFFFFFF });
         orbit = new THREE.Line(geometry, material);
         scene.add(orbit);
+    }
+
+    //Asteroids
+    asteroidBelt = new THREE.Object3D();
+    solarSystem.add(asteroidBelt);
+    for(var x=0; x<1000; x++) {
+        var asteroidSize = Math.random() * (8 - 1) + 1,
+            asteroidShape1 = Math.random() * (10 - 4) + 4,
+            asteroidShape2 = Math.random() * (10 - 4) + 4,
+            asteroidOrbit = Math.random() * (asteroidOrbitEnd - asteroidOrbitStart) + asteroidOrbitStart,
+            asteroidPositionY = Math.random() * (2 - (-2) + (-2));
+        var asteroid = new THREE.Mesh(new THREE.SphereGeometry(asteroidSize, asteroidShape1, asteroidShape2), new THREE.MeshLambertMaterial({color: 0xeeeeee}));
+        asteroid.position.y = asteroidPositionY;
+        var radians = (Math.round(Math.random() * 360)) * Math.PI / 180;
+        asteroid.position.x = Math.cos(radians) * asteroidOrbit;
+        asteroid.position.z = Math.sin(radians) * asteroidOrbit;
+        asteroidBelt.add(asteroid);
     }
 
     //Add rings and satelites
@@ -219,13 +236,13 @@ function loadTextureMaterial(color_map_texture, bump_map_texture) {
 
 function createSatelites(planetSatelite) {
     for (let eachPlanet = 0; eachPlanet < planetSatelite.length; eachPlanet++) {
-        var sizeOfSatelite = 15 / planetSatelite[eachPlanet];
+        var sizeOfSatelite = 60 / planetSatelite[eachPlanet];
         var sateliteObj = new THREE.Object3D;
         geometry = new THREE.SphereGeometry(sizeOfSatelite, 32, 32);
         material3D = loadTextureMaterial(satelitesColorMap[eachPlanet], satelitesBumpMap[eachPlanet]);
-        sun = new THREE.Mesh(geometry, material3D);
-        sun.position.set(0, 0, 50);
-        sateliteObj.add(sun);
+        planet = new THREE.Mesh(geometry, material3D);
+        planet.position.set(0, 0, 50);
+        sateliteObj.add(planet);
         sateliteObj.position.set(100 * (planetSatelite[eachPlanet] + 1), 0, 100 * (planetSatelite[eachPlanet] + 1));
         groupPlanet[planetSatelite[eachPlanet]].add(sateliteObj);
     }
