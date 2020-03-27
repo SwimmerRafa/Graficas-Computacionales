@@ -140,7 +140,7 @@ function createScene(canvas){
 
     //Background
     const loader = new THREE.TextureLoader();
-    loader.load('../images/fondo.jpg' , function(texture)
+    loader.load('../images/galaxia.jpg' , function(texture)
     {
         scene.background = texture;
     });
