@@ -5,15 +5,13 @@ let geometry, material3D, solarSystem, sunGroup, startPoint, asteroidBelt, endPo
 let duration =  10000; // ms
 let currentTime = Date.now();
 
-
-
 // Groups of every planet
-let sizePlanet = [15, 30, 33, 25, 60, 50, 40, 38, 13];
+let sizePlanet = [30, 45, 60, 55, 120, 110, 90, 76, 26];
 let groupPlanet = {};
 
-var AU = 350;
-var asteroidOrbitStart = 280 + (AU * 2),
-    asteroidOrbitEnd = 280 + (AU * 3);
+var AU = 150;
+var asteroidOrbitStart = 1350 + (AU * 2),
+    asteroidOrbitEnd = 1355  + (AU + 2);
 
 let colorMap = ["../images/mercurymap.jpg", "../images/venusmap.jpg", "../images/earthmap.jpg",
     "../images/marsmap.jpg", "../images/jupitermap.jpg", "../images/saturnmap.jpg", "../images/uranusmap.jpg",
@@ -56,25 +54,24 @@ function animate() {
     groupPlanet[8].rotation.y += (angle + 0.0006) / 4;
 
     // Rotations of satellites
-    groupPlanet[2].children[1].rotation.x += angle + angle;
-    groupPlanet[2].children[1].children[0].rotation.x += angle;
-    groupPlanet[3].children[1].rotation.x += angle + angle;
-    groupPlanet[3].children[2].rotation.y += angle + angle;
+    //Earth
+    groupPlanet[2].children[1].rotation.x += angle + angle * 5;
+    //Mars
+    groupPlanet[3].children[1].rotation.x += angle + angle * 6;
+    groupPlanet[3].children[2].rotation.y += angle + angle * 2;
     //Jupyter
-    groupPlanet[4].children[1].rotation.x += angle + 32;
-    groupPlanet[4].children[2].rotation.y += angle -4;
-    groupPlanet[4].children[3].rotation.z += angle ;
-    groupPlanet[4].children[4].rotation.y += angle * angle;
+    groupPlanet[4].children[1].rotation.x += angle + angle * 5 ;
+    groupPlanet[4].children[2].rotation.x += angle + angle * 2;
+    groupPlanet[4].children[3].rotation.x +=  angle + angle ;
+    groupPlanet[4].children[4].rotation.x += angle + angle;
     //Uranus
-    groupPlanet[6].children[1].rotation.x += angle + 3;
-    groupPlanet[6].children[2].rotation.y += angle + 4;
-    groupPlanet[6].children[3].rotation.x += angle + 5;
-    groupPlanet[6].children[3].rotation.y += angle + 6;
-    groupPlanet[6].children[5].rotation.x += angle + 6;
+    groupPlanet[6].children[1].rotation.x += angle + angle;
+    groupPlanet[6].children[2].rotation.x += angle + angle * 4;
+    groupPlanet[6].children[3].rotation.x += angle + angle * 6;
+    groupPlanet[6].children[3].rotation.x += angle + angle * 2;
+    groupPlanet[6].children[5].rotation.x += angle + angle * 3;
     //Neptune
-    groupPlanet[7].children[1].rotation.x += angle * angle;
-
-
+    groupPlanet[7].children[1].rotation.x += angle + angle;
 
     // Rotations of every planet
     groupPlanet[0].children[0].rotation.x += angle;
@@ -114,7 +111,6 @@ function render() {
     asteroidBelt.rotation.y += 0.0010;
 }
 
-
 function createScene(canvas){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -129,7 +125,7 @@ function createScene(canvas){
 
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera( 45, canvas.width / canvas.height, 1, 100000 );
-    camera.position.y = 300;
+    camera.position.y = 200;
     camera.position.z = 500;
     camera.lookAt(scene.position);
     scene.add(camera);
@@ -141,6 +137,13 @@ function createScene(canvas){
 
     //MainGroup
     solarSystem = new THREE.Object3D;
+
+    //Background
+    const loader = new THREE.TextureLoader();
+    loader.load('../images/fondo.jpg' , function(texture)
+    {
+        scene.background = texture;
+    });
 
     //Luz
     let light = new THREE.SpotLight(0xffffff, 2, 0, 2);
@@ -166,7 +169,7 @@ function createScene(canvas){
         fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
         transparent:true,
     } );
-    geometry = new THREE.SphereGeometry(150, 32, 32);
+    geometry = new THREE.SphereGeometry(220, 32, 32);
 
     sun = new THREE.Mesh(geometry, material);
     sun.position.x = 0;
@@ -177,7 +180,7 @@ function createScene(canvas){
     solarSystem.add(sunGroup);
 
     //Add all planets
-    let spacePlanet = 200;
+    let spacePlanet = 250;
     for (let i = 0; i < 9; i++) {
         geometry = new THREE.SphereGeometry(sizePlanet[i], 32, 32);
         material3D = loadTextureMaterial(colorMap[i], bumpMap[i]);
@@ -199,7 +202,6 @@ function createScene(canvas){
         orbit = new THREE.Line(geometry, material);
         scene.add(orbit);
     }
-
 
     //Asteroids
     asteroidBelt = new THREE.Object3D();
@@ -224,6 +226,8 @@ function createScene(canvas){
     createSatelites(numberPlanetSatelites);
     createRings(numberPlanetRings);
 
+
+
     ///Add all to scene
     scene.add(solarSystem);
     window.addEventListener('mousemove', onMouseMove, false);
@@ -239,14 +243,14 @@ function loadTextureMaterial(color_map_texture, bump_map_texture) {
 
 function createSatelites(planetSatelite) {
     for (let eachPlanet = 0; eachPlanet < planetSatelite.length; eachPlanet++) {
-        var sizeOfSatelite = 60 / planetSatelite[eachPlanet];
+        var sizeOfSatelite = 40 / planetSatelite[eachPlanet];
         var sateliteObj = new THREE.Object3D;
         geometry = new THREE.SphereGeometry(sizeOfSatelite, 32, 32);
         material3D = loadTextureMaterial(satelitesColorMap[eachPlanet], satelitesBumpMap[eachPlanet]);
         planet = new THREE.Mesh(geometry, material3D);
         planet.position.set(0, 0, 50);
         sateliteObj.add(planet);
-        sateliteObj.position.set(100 * (planetSatelite[eachPlanet] + 1), 0, 100 * (planetSatelite[eachPlanet] + 1));
+        sateliteObj.position.set(230 * (planetSatelite[eachPlanet] + 1), 0, 230 * (planetSatelite[eachPlanet] + 1));
         groupPlanet[planetSatelite[eachPlanet]].add(sateliteObj);
     }
 }
@@ -254,14 +258,13 @@ function createSatelites(planetSatelite) {
 function createRings(planetRing) {
     for (let eachPlanetRing = 0; eachPlanetRing < planetRing.length; eachPlanetRing++) {
         var sizeOfRing = sizePlanet[planetRing[eachPlanetRing]];
-        geometry = new THREE.RingGeometry(sizeOfRing + 10, sizeOfRing + 27, 30);
+        geometry = new THREE.RingGeometry(sizeOfRing + 20, sizeOfRing + 54, 60);
         material3D = loadTextureMaterial(ringColorMap[eachPlanetRing], ringBumpMap[eachPlanetRing]);
         var ring = new THREE.Mesh(geometry, material3D);
         ring.rotation.x = 150;
         ring.rotation.y = 200;
         ring.rotation.z = 100;
-        ring.position.set(100 * (planetRing[eachPlanetRing] + 1), 0, 100 * (planetRing[eachPlanetRing] + 1));
+        ring.position.set(250 * (planetRing[eachPlanetRing] + 1), 0, 250 * (planetRing[eachPlanetRing] + 1));
         groupPlanet[planetRing[eachPlanetRing]].add(ring)
     }
 }
-
