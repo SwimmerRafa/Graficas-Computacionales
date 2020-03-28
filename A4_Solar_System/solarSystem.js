@@ -194,7 +194,7 @@ function createScene(canvas){
         endPoint = new THREE.Vector3(spacePlanet * (i +1) , 0 , spacePlanet * (i +1) );
 
         //Orbits
-        geometry = new THREE.CircleGeometry(startPoint.distanceTo(endPoint), 128, 0, 2 * Math.PI);
+        geometry = new THREE.CircleGeometry(startPoint.distanceTo(endPoint), 128, 0, 6.3);
         geometry.vertices.shift();
         geometry.rotateX(-Math.PI / 2);
         material = new THREE.LineBasicMaterial({ color: 0xFFFFFF });
@@ -241,13 +241,14 @@ function loadTextureMaterial(color_map_texture, bump_map_texture) {
 }
 
 function createSatelites(planetSatelite) {
+    let random = (Math.random() * (+2 - +(-2))) + +(-2);
     for (let eachPlanet = 0; eachPlanet < planetSatelite.length; eachPlanet++) {
         var sizeOfSatelite = 40 / planetSatelite[eachPlanet];
         var sateliteObj = new THREE.Object3D;
         geometry = new THREE.SphereGeometry(sizeOfSatelite, 32, 32);
         material3D = loadTextureMaterial(satelitesColorMap[eachPlanet], satelitesBumpMap[eachPlanet]);
         planet = new THREE.Mesh(geometry, material3D);
-        planet.position.set(0, 0, 50);
+        planet.position.set(random, 0, 80);
         sateliteObj.add(planet);
         sateliteObj.position.set(230 * (planetSatelite[eachPlanet] + 1), 0, 230 * (planetSatelite[eachPlanet] + 1));
         groupPlanet[planetSatelite[eachPlanet]].add(sateliteObj);
