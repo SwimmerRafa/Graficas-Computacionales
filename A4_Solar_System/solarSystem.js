@@ -55,23 +55,25 @@ function animate() {
 
     // Rotations of satellites
     //Earth
-    groupPlanet[2].children[1].rotation.x += angle + angle * 5;
+    groupPlanet[2].children[1].rotation.y += 0.009;
     //Mars
-    groupPlanet[3].children[1].rotation.x += angle + angle * 6;
-    groupPlanet[3].children[2].rotation.y += angle + angle * 2;
+    groupPlanet[3].children[1].rotation.y += 0.02;
+
+    groupPlanet[3].children[2].rotation.x += 0.03;
+
     //Jupyter
-    groupPlanet[4].children[1].rotation.x += angle + angle * 5 ;
-    groupPlanet[4].children[2].rotation.x += angle + angle * 2;
-    groupPlanet[4].children[3].rotation.x +=  angle + angle ;
-    groupPlanet[4].children[4].rotation.x += angle + angle;
+    groupPlanet[4].children[1].rotation.x += 0.03;
+    groupPlanet[4].children[2].rotation.y += 0.004;
+    groupPlanet[4].children[3].rotation.y = 0.05;
+    groupPlanet[4].children[4].rotation.x += 0.01;
     //Uranus
-    groupPlanet[6].children[1].rotation.x += angle + angle;
-    groupPlanet[6].children[2].rotation.x += angle + angle * 4;
-    groupPlanet[6].children[3].rotation.x += angle + angle * 6;
-    groupPlanet[6].children[3].rotation.x += angle + angle * 2;
-    groupPlanet[6].children[5].rotation.x += angle + angle * 3;
+    groupPlanet[6].children[1].rotation.x += 0.03;
+    groupPlanet[6].children[2].rotation.y += 0.04;
+    groupPlanet[6].children[3].rotation.x = 0.05;
+    groupPlanet[6].children[3].rotation.y += 0.003;
+    groupPlanet[6].children[5].rotation.y += 0.06;
     //Neptune
-    groupPlanet[7].children[1].rotation.x += angle + angle;
+    groupPlanet[7].children[1].rotation.x += 0.03;
 
     // Rotations of every planet
     groupPlanet[0].children[0].rotation.x += angle;
@@ -248,9 +250,9 @@ function createSatelites(planetSatelite) {
         geometry = new THREE.SphereGeometry(sizeOfSatelite, 32, 32);
         material3D = loadTextureMaterial(satelitesColorMap[eachPlanet], satelitesBumpMap[eachPlanet]);
         planet = new THREE.Mesh(geometry, material3D);
-        planet.position.set(random, 0, 80);
+        planet.position.set(random, 0, 125);
         sateliteObj.add(planet);
-        sateliteObj.position.set(230 * (planetSatelite[eachPlanet] + 1), 0, 230 * (planetSatelite[eachPlanet] + 1));
+        sateliteObj.position.set(250 * (planetSatelite[eachPlanet] + 1), 0, 250 * (planetSatelite[eachPlanet] + 1));
         groupPlanet[planetSatelite[eachPlanet]].add(sateliteObj);
     }
 }
