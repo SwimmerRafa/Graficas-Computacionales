@@ -146,12 +146,12 @@ function createScene(canvas){
     });
 
     //Luz
-    let light = new THREE.SpotLight(0xffffff, 2, 0, 2);
+    let light = new THREE.PointLight(0xffffff, 2, 0, 2);
     light.position.set(0, 0, 0);
     solarSystem.add(light);
 
     //Añadir Sol
-    let GLOWMAP = new THREE.TextureLoader().load("../images/sunmap.jpg");
+    let GLOWMAP = new THREE.TextureLoader().load("../images/sun_texture.png");
     let NOISEMAP = new THREE.TextureLoader().load("../images/noisy-texture.png");
     uniforms =
         {
@@ -166,8 +166,7 @@ function createScene(canvas){
     let material = new THREE.ShaderMaterial({
         uniforms: uniforms,
         vertexShader: document.getElementById( 'vertexShader' ).textContent,
-        fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
-        transparent:true,
+        fragmentShader: document.getElementById( 'fragmentShader' ).textContent
     } );
     geometry = new THREE.SphereGeometry(220, 32, 32);
 
@@ -195,7 +194,7 @@ function createScene(canvas){
         endPoint = new THREE.Vector3(spacePlanet * (i +1) , 0 , spacePlanet * (i +1) );
 
         //Orbits
-        geometry = new THREE.CircleGeometry(startPoint.distanceTo(endPoint), 128);
+        geometry = new THREE.CircleGeometry(startPoint.distanceTo(endPoint), 128, 0, 2 * Math.PI);
         geometry.vertices.shift();
         geometry.rotateX(-Math.PI / 2);
         material = new THREE.LineBasicMaterial({ color: 0xFFFFFF });
