@@ -45,7 +45,7 @@ function animate() {
     sunGroup.rotation.y += angle;
     groupPlanet[0].rotation.y += (angle + 0.035) / 4;
     groupPlanet[1].rotation.y += (angle + 0.03) / 4;
-    groupPlanet[2].rotation.y += (angle + 0.03) / 4;
+    groupPlanet[2].rotation.y += (angle + 0.009) / 4;
     groupPlanet[3].rotation.y += (angle + 0.004) / 4;
     groupPlanet[4].rotation.y += (angle + 0.0045) / 4;
     groupPlanet[5].rotation.y += (angle + 0.003) / 4;
@@ -58,19 +58,17 @@ function animate() {
     groupPlanet[2].children[1].rotation.y += 0.009;
     //Mars
     groupPlanet[3].children[1].rotation.y += 0.02;
-
     groupPlanet[3].children[2].rotation.x += 0.03;
-
     //Jupyter
     groupPlanet[4].children[1].rotation.x += 0.03;
-    groupPlanet[4].children[2].rotation.y += 0.004;
+    groupPlanet[4].children[2].rotation.y += 0.04;
     groupPlanet[4].children[3].rotation.y = 0.05;
     groupPlanet[4].children[4].rotation.x += 0.01;
     //Uranus
     groupPlanet[6].children[1].rotation.x += 0.03;
     groupPlanet[6].children[2].rotation.y += 0.04;
     groupPlanet[6].children[3].rotation.x = 0.05;
-    groupPlanet[6].children[3].rotation.y += 0.003;
+    groupPlanet[6].children[3].rotation.y += 0.01;
     groupPlanet[6].children[5].rotation.y += 0.06;
     //Neptune
     groupPlanet[7].children[1].rotation.x += 0.03;
