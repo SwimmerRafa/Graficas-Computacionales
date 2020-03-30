@@ -68,8 +68,8 @@ function animate() {
     groupPlanet[6].children[1].rotation.x += 0.03;
     groupPlanet[6].children[2].rotation.y += 0.04;
     groupPlanet[6].children[3].rotation.x += 0.05;
-    groupPlanet[6].children[3].rotation.y += 0.01;
-    groupPlanet[6].children[5].rotation.y += 0.06;
+    groupPlanet[6].children[4].rotation.y += 0.01;
+    groupPlanet[6].children[5].rotation.x += 0.06;
     //Neptune
     groupPlanet[7].children[1].rotation.x += 0.03;
 
