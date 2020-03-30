@@ -13,51 +13,48 @@
 <script src="../libs/three.js/controls/OrbitControls.js"></script>
 
 <script id="fragmentShader" type="x-shader/x-fragment">
+			uniform float time;
+			uniform float fogDensity;
+			uniform vec3 fogColor;
+			// Textura de transparencia
+			uniform sampler2D texture1;
+			// Textura de lava
+			uniform sampler2D texture2;
+			varying vec2 vUv;
 
-	uniform float time;
-	uniform sampler2D noiseTexture;
-	uniform sampler2D glowTexture;
+			void main( void ) {
+				vec4 noise = texture2D( texture1, vUv );
+				vec2 T1 = vUv + vec2(1.5,-1.5) * time;
+				vec2 T2 = vUv + vec2( - 1.0, 0.0 ) * time;
 
-	varying vec2 texCoord;
+				T1.x += noise.b * 5.0;
+				T1.y += noise.g * 0.2;
 
-	void main( void ) {
-		vec4 noise = texture2D( noiseTexture, texCoord );
+				T2.x -= noise.r * 0.3;
+				T2.y += noise.b * 0.3;
 
-		vec2 T1 = texCoord + vec2( 0.8, -1.5 ) * time;
-		vec2 T2 = texCoord + vec2( .5, 0.8 ) * time;
+				float alpha = texture2D(texture1, T1).a;
+				vec4 color = texture2D( texture2, T2 );
+				vec4 temp = color * (vec4(alpha,alpha,alpha,alpha)) + (color * color);
 
-		T1.x += noise.r * 5.0;
-		T1.y += noise.g * 5.0;
+				if (temp.r > 1.5) temp.bg += clamp(temp.r - 0.7, 0.5, 0.2);
+				if(temp.g > 0.7) temp.rb += temp.r - 1.0;
+				if(temp.b > 1.0) temp.rg += temp.b - 0.5;
+				if(temp.r < 0.2) temp.rgb *= 1.1;
 
-		T2.x += noise.g * 0.2;
-		T2.y += noise.b * 0.2;
-
-		float alpha = texture2D( noiseTexture, T1 * 2.0 ).a ;//- 0.25;
-
-		vec4 color = texture2D( glowTexture, T2 );
-
-		vec4 newColor = vec4( alpha, alpha, alpha, alpha ) + color;
-		if(newColor.r > 1.5) newColor.bg += clamp(newColor.r - 2.0, 0.1, 0.5);
-		if(newColor.g > 0.7) newColor.rb += newColor.r - 0.8;
-		if(newColor.b > 1.0) newColor.rg += newColor.b - 0.5;
-
-		if(newColor.r < 0.2) newColor.rgb *= 1.1;
-
-		gl_FragColor = newColor;
-	}
-
+				gl_FragColor = temp * 1.5;
+			}
 </script>
 
 <script id="vertexShader" type="x-shader/x-vertex">
-
-	varying vec2 texCoord;
-
-	void main()
-	{
-		texCoord = uv;
-		vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-		gl_Position = projectionMatrix * mvPosition;
-	}
+	uniform vec2 uvScale;
+			varying vec2 vUv;
+			void main()
+			{
+				vUv = uvScale * uv;
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+				gl_Position = projectionMatrix * mvPosition;
+			}
 
 </script>
 

@@ -62,12 +62,12 @@ function animate() {
     //Jupyter
     groupPlanet[4].children[1].rotation.x += 0.03;
     groupPlanet[4].children[2].rotation.y += 0.04;
-    groupPlanet[4].children[3].rotation.y = 0.05;
+    groupPlanet[4].children[3].rotation.y += 0.05;
     groupPlanet[4].children[4].rotation.x += 0.01;
     //Uranus
     groupPlanet[6].children[1].rotation.x += 0.03;
     groupPlanet[6].children[2].rotation.y += 0.04;
-    groupPlanet[6].children[3].rotation.x = 0.05;
+    groupPlanet[6].children[3].rotation.x += 0.05;
     groupPlanet[6].children[3].rotation.y += 0.01;
     groupPlanet[6].children[5].rotation.y += 0.06;
     //Neptune
@@ -151,26 +151,24 @@ function createScene(canvas){
     solarSystem.add(light);
 
     //Añadir Sol
-    let GLOWMAP = new THREE.TextureLoader().load("../images/sun_texture.png");
-    let NOISEMAP = new THREE.TextureLoader().load("../images/noisy-texture.png");
-    uniforms =
-        {
-            time: { type: "f", value: 0.2 },
-            noiseTexture: { type: "t", value: NOISEMAP },
-            glowTexture: { type: "t", value: GLOWMAP }
-        };
+    var textureLoader = new THREE.TextureLoader();
 
-    uniforms.noiseTexture.value.wrapS = uniforms.noiseTexture.value.wrapT = THREE.RepeatWrapping;
-    uniforms.glowTexture.value.wrapS = uniforms.glowTexture.value.wrapT = THREE.RepeatWrapping;
+    uniforms = {
+        "time": { value: 1.0 },
+        "uvScale": { value: new THREE.Vector2( 2.0, 1 ) },
+        "texture1": { value: textureLoader.load( '../images/cloud.png' ) },
+        "texture2": { value: textureLoader.load( '../images/lava.jpg' ) }
+    };
 
-    let material = new THREE.ShaderMaterial({
+    uniforms[ "texture1" ].value.wrapS = uniforms[ "texture1" ].value.wrapT = THREE.RepeatWrapping;
+    uniforms[ "texture2" ].value.wrapS = uniforms[ "texture2" ].value.wrapT = THREE.RepeatWrapping;
+
+    var material = new THREE.ShaderMaterial( {
         uniforms: uniforms,
         vertexShader: document.getElementById( 'vertexShader' ).textContent,
         fragmentShader: document.getElementById( 'fragmentShader' ).textContent
     } );
-    geometry = new THREE.SphereGeometry(220, 32, 32);
-
-    sun = new THREE.Mesh(geometry, material);
+    sun = new THREE.Mesh( new THREE.SphereGeometry( 220, 30, 30 ), material );
     sun.position.x = 0;
     sun.position.y = 0;
     sun.position.z = 0;
