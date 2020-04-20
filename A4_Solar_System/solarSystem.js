@@ -132,6 +132,7 @@ function createScene(canvas){
 
     //Controles
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
     controls.damping = 0.2;
     controls.addEventListener('change', render);
 
