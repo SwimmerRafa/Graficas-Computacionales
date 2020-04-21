@@ -2,37 +2,30 @@
 // 2. Enable shadows and set shadow parameters for the lights that cast shadows. 
 // Both the THREE.DirectionalLight type and the THREE.SpotLight type support shadows. 
 // 3. Indicate which geometry objects cast and receive shadows.
-
+let mouse = new THREE.Vector2();
 let renderer = null, 
 scene = null, 
 camera = null,
 root = null,
 group = null,
 objectList = [],
-orbitControls = null;
-
-let objLoader = null, jsonLoader = null;
-
-let duration = 20000; // ms
+penguin = null;
+let duration = 20, // sec
+crateAnimator = null,
+loopAnimation = false,
+animateCrate = true;
 let currentTime = Date.now();
-
 let directionalLight = null;
 let spotLight = null;
 let ambientLight = null;
-let pointLight = null;
 let mapUrl = "../images/nieve.jpg";
-
 let SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048;
 let objModelUrl = {obj:'../models/Penguin_obj/penguin.obj', map:'../models/Penguin_obj/peng_texture.jpg'};
 
-function promisifyLoader ( loader, onProgress ) 
-{
+function promisifyLoader ( loader, onProgress ) {
     function promiseLoader ( url ) {
-  
       return new Promise( ( resolve, reject ) => {
-  
         loader.load( url, resolve, onProgress, reject );
-  
       } );
     }
   
@@ -44,29 +37,7 @@ function promisifyLoader ( loader, onProgress )
 
 const onError = ( ( err ) => { console.error( err ); } );
 
-async function loadJson(url, objectList)
-{
-    const jsonPromiseLoader = promisifyLoader(new THREE.ObjectLoader());
-    
-    try {
-        const object = await jsonPromiseLoader.load(url);
-
-        object.castShadow = true;
-        object.receiveShadow = true;
-        object.position.y = -1;
-        object.position.x = 1.5;
-        object.name = "jsonObject";
-        objectList.push(object);
-        scene.add(object);
-
-    }
-    catch (err) {
-        return onError(err);
-    }
-}
-
-async function loadObj(objModelUrl, objectList)
-{
+async function loadObj(objModelUrl, objectList) {
     const objPromiseLoader = promisifyLoader(new THREE.OBJLoader());
 
     try {
@@ -86,63 +57,92 @@ async function loadObj(objModelUrl, objectList)
             }
         });
 
-        object.scale.set(3, 3, 3);
+        object.scale.set(4, 4, 4);
         object.position.z = -3;
         object.position.x = -1.5;
         object.rotation.y = -3;
         object.name = "objObject";
         objectList.push(object);
-        scene.add(object);
-
+        penguin.add(object);
     }
     catch (err) {
         return onError(err);
     }
 }
 
-function animate() 
-{
-    let now = Date.now();
-    let deltat = now - currentTime;
-    currentTime = now;
-    let fract = deltat / duration;
-    let angle = Math.PI * 2 * fract;
-
-    for(object of objectList)
-        if(object)
-            object.rotation.y += angle / 2;
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-function run() 
-{
+function onMouseMove(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+}
+
+function run() {
     requestAnimationFrame(function() { run(); });
-    
-    // Render the scene
-    renderer.render( scene, camera );
-
-    // Spin the cube for next frame
-    animate();
-
-    // Update the camera controller
-    orbitControls.update();
+    render();
+    KF.update();
 }
 
-function setLightColor(light, r, g, b)
-{
-    r /= 255;
-    g /= 255;
-    b /= 255;
-    
-    light.color.setRGB(r, g, b);
+function playAnimations() {
+    // position animation
+    if (crateAnimator)
+        crateAnimator.stop();
+    group.position.set(0, 0, 0);
+    group.rotation.set(0, 0, 0);
+
+    if (animateCrate) {
+        crateAnimator = new KF.KeyFrameAnimator;
+        crateAnimator.init({
+            interps:
+                [
+                    // {
+                    //     keys: [0, .2, .25, .375, .5, .9, 1],
+                    //     values: [
+                    //         { x : 0, y:0, z: 0 },
+                    //         { x : .5, y:0, z: .5 },
+                    //         { x : 0, y:0, z: 0 },
+                    //         { x : .5, y:-.25, z: .5 },
+                    //         { x : 0, y:0, z: 0 },
+                    //         { x : .5, y:-.25, z: .5 },
+                    //         { x : 0, y:0, z: 0 },
+                    //     ],
+                    //     target: penguin.position
+                    // },
+                    {
+                        keys: [0, .25, .5, .75, 1],
+                        values:[
+                            { x : 0, z : 0 },
+                            { x : 0, z : 0 },
+                            { x : 0, z : 0 },
+                        ],
+                        target: penguin.rotation
+                    },
+                ],
+            loop: loopAnimation,
+            duration: duration * 500,
+            easing: TWEEN.Easing.Bounce.InOut,
+
+        });
+        crateAnimator.start();
+    }
 }
 
-function createScene(canvas) 
-{
+function render() {
+    raycaster.setFromCamera(mouse, camera);
+    renderer.render(scene, camera);
+}
+
+function createScene(canvas) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     // Create a new Three.js scene
     scene = new THREE.Scene();
+    scene.background = new THREE.Color( 'skyblue' );
     raycaster = new THREE.Raycaster();
 
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
@@ -150,12 +150,12 @@ function createScene(canvas)
     // Turn on shadows
     renderer.shadowMap.enabled = true;
     // Options are THREE.BasicShadowMap, THREE.PCFShadowMap, PCFSoftShadowMap
-    renderer.shadowMap.type = THREE.BasicShadowMap;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera( 45, canvas.width / canvas.height, 1, 100000 );
-    camera.position.y = 200;
-    camera.position.z = 500;
+    camera.position.y = 600;
+    camera.position.z = 1000;
     camera.lookAt(scene.position);
     scene.add(camera);
 
@@ -163,38 +163,31 @@ function createScene(canvas)
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.damping = 0.2;
-
     
     // Create a group to hold all the objects
     root = new THREE.Object3D;
-    
-    // Add a directional light to show off the object
-    directionalLight = new THREE.DirectionalLight( 0x000000, 1);
 
     // Create and add all the lights
-    directionalLight.position.set(.5, 1, -3);
-    directionalLight.target.position.set(0,0,0);
-    directionalLight.castShadow = true;
-    root.add(directionalLight);
-
-    spotLight = new THREE.SpotLight (0x000000);
-    spotLight.position.set(2, 8, 15);
+    spotLight = new THREE.SpotLight (0x404040, 1);
+    spotLight.position.set(150, 600, 150);
     spotLight.target.position.set(-2, 0, -2);
+    spotLight.castShadow = true;
     root.add(spotLight);
 
-    spotLight.castShadow = true;
-
-    spotLight.shadow.camera.near = 1;
-    spotLight.shadow. camera.far = 200;
-    spotLight.shadow.camera.fov = 45;
+    //Shadow Effects
+    spotLight.shadow.camera.near = 100;
+    spotLight.shadow. camera.far = 1000;
+    spotLight.shadow.camera.fov = 50;
     
     spotLight.shadow.mapSize.width = SHADOW_MAP_WIDTH;
     spotLight.shadow.mapSize.height = SHADOW_MAP_HEIGHT;
 
-    ambientLight = new THREE.AmbientLight ( 0xffffff, 0.8);
+    ambientLight = new THREE.AmbientLight ( 0xffffff, 0.7);
     root.add(ambientLight);
     
     // Create the objects
+    penguin = new THREE.Object3D();
+    root.add(penguin);
     loadObj(objModelUrl, objectList);
 
     // Create a group to hold the objects
@@ -210,7 +203,7 @@ function createScene(canvas)
 
     // let asteroid = new THREE.Object3D();
     // Put in a ground plane to show off the lighting
-    let geometry = new THREE.PlaneGeometry(canvas.width, canvas.height, 50, 50);
+    let geometry = new THREE.PlaneGeometry(1000, 1000 , 50, 50);
     let mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({color:color, map:map, side:THREE.DoubleSide}));
 
     mesh.rotation.x = -Math.PI / 2;
@@ -218,7 +211,8 @@ function createScene(canvas)
     mesh.castShadow = false;
     mesh.receiveShadow = true;
     group.add( mesh );
-
-    
     scene.add( root );
+
+    window.addEventListener('mousemove', onMouseMove, false);
+    window.addEventListener('resize', onWindowResize, false);
 }
