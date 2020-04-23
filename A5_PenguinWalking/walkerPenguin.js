@@ -10,8 +10,9 @@ root = null,
 group = null,
 objectList = [],
 penguin = null;
-let duration = 20, // sec
+let duration = 15, // sec
 crateAnimator = null,
+walking = null,
 loopAnimation = false,
 animateCrate = true;
 let currentTime = Date.now();
@@ -99,35 +100,133 @@ function playAnimations() {
         crateAnimator.init({
             interps:
                 [
-                    // {
-                    //     keys: [0, .2, .25, .375, .5, .9, 1],
-                    //     values: [
-                    //         { x : 0, y:0, z: 0 },
-                    //         { x : .5, y:0, z: .5 },
-                    //         { x : 0, y:0, z: 0 },
-                    //         { x : .5, y:-.25, z: .5 },
-                    //         { x : 0, y:0, z: 0 },
-                    //         { x : .5, y:-.25, z: .5 },
-                    //         { x : 0, y:0, z: 0 },
-                    //     ],
-                    //     target: penguin.position
-                    // },
                     {
-                        keys: [0, .25, .5, .75, 1],
-                        values:[
-                            { x : 0, z : 0 },
-                            { x : 0, z : 0 },
-                            { x : 0, z : 0 },
+                        keys: [0, 0.03125, 0.0625, 0.09375, 0.125, 0.15625, 0.1875, 0.21875, 0.25, 0.28125, 0.3125,
+                        0.34375, 0.375, 0.40625, 0.4375, 0.46875, 0.5, 0.53125, 0.5625, 0.59375, 0.625, 0.65625, 0.6875,
+                        0.71875, 0.75, 0.78125, 0.8125, 0.84375, 0.875, 0.90625, 0.9375, 0.96875, 1],
+                        values: [
+                            {x: 0, y: 0, z: 0},
+
+                            {x: 100, y: 0, z: 100},
+                            {x: 200, y: 0, z: 200},
+                            {x: 300, y: 0, z: 300},
+                            {x: 400, y: 0, z: 400},
+                            {x: 500, y: 0, z: 300},
+                            {x: 600, y: 0, z: 200},
+                            {x: 700, y: 0, z: 100},
+                            {x: 800, y: 0, z: 0},
+                            {x: 700, y: 0, z: -100},
+                            {x: 600, y: 0, z: -200},
+                            {x: 500, y: 0, z: -300},
+                            {x: 400, y: 0, z: -400},
+                            {x: 300, y: 0, z: -300},
+                            {x: 200, y: 0, z: -200},
+                            {x: 100, y: 0, z: -100},
+                            {x: 0, y: 0, z: 0},
+                            {x: -100, y: 0, z: 100},
+                            {x: -200, y: 0, z: 200},
+                            {x: -300, y: 0, z: 300},
+                            {x: -400, y: 0, z: 400},
+                            {x: -500, y: 0, z: 300},
+                            {x: -600, y: 0, z: 200},
+                            {x: -700, y: 0, z: 100},
+                            {x: -800, y: 0, z: 0},
+                            {x: -700, y: 0, z: -100},
+                            {x: -600, y: 0, z: -200},
+                            {x: -500, y: 0, z: -300},
+                            {x: -400, y: 0, z: -400},
+                            {x: -300, y: 0, z: -300},
+                            {x: -200, y: 0, z: -200},
+                            {x: -100, y: 0, z: -100},
+                            {x: 0, y: 0, z: 0},
+                        ],
+                        target: penguin.position
+                    },
+                    {
+                        keys: [0, 0.03125, 0.0625, 0.09375, 0.125, 0.15625, 0.1875, 0.21875, 0.25, 0.28125, 0.3125,
+                            0.34375, 0.375, 0.40625, 0.4375, 0.46875, 0.5, 0.53125, 0.5625, 0.59375, 0.625, 0.65625, 0.6875,
+                            0.71875, 0.75, 0.78125, 0.8125, 0.84375, 0.875, 0.90625, 0.9375, 0.96875, 1],
+                        values: [
+                            {y: (Math.PI / 30) * 35},
+                            {y: (Math.PI / 30) * 35},
+                            {y: (Math.PI / 30) * 35},
+                            {y: (Math.PI / 30) * 35},
+                            {y: (Math.PI / 30) * 42},
+                            {y: (Math.PI / 30) * 50},
+                            {y: (Math.PI / 30) * 50},
+                            {y: (Math.PI / 30) * 55},
+                            {y: (Math.PI / 30) * 60},
+                            {y: (Math.PI / 30) * 70},
+                            {y: (Math.PI / 30) * 70},
+                            {y: (Math.PI / 30) * 75},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 80},
+                            {y: (Math.PI / 30) * 70},
+                            {y: (Math.PI / 30) * 70},
+                            {y: (Math.PI / 30) * 65},
+                            {y: (Math.PI / 30) * 50},
+                            {y: (Math.PI / 30) * 45},
+                            {y: (Math.PI / 30) * 40},
+                            {y: (Math.PI / 30) * 40},
+                            {y: (Math.PI / 30) * 40},
+                            {y: (Math.PI / 30) * 40},
+                            {y: (Math.PI / 30) * 40},
+                            {y: (Math.PI / 30) * 40},
+                            {y: (Math.PI / 30) * 40},
                         ],
                         target: penguin.rotation
                     },
                 ],
             loop: loopAnimation,
-            duration: duration * 500,
-            easing: TWEEN.Easing.Bounce.InOut,
+            duration: duration * 1000,
+            easing: TWEEN.Easing.Linear.None,
 
         });
         crateAnimator.start();
+
+        walking = new KF.KeyFrameAnimator();
+        walking.init({
+            interps: [
+                {
+                    keys: [0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16, 0.18,
+                        0.20, 0.22, 0.24, 0.26, 0.28, 0.30, 0.32, 0.34, 0.36, 0.38,
+                        0.40, 0.42, 0.44, 0.46, 0.48, 0.50, 0.52, 0.54, 0.56, 0.58,
+                        0.60, 0.62, 0.64, 0.66, 0.68, 0.70, 0.72, 0.74, 0.76, 0.78,
+                        0.80, 0.82, 0.84, 0.86, 0.88, 0.90, 0.92, 0.94, 0.96, 0.98, 1],
+                    values: [
+                        { z: 0 },{ z: -Math.PI / 20 }, { z: Math.PI / 20 },
+                        { z: -Math.PI / 20 },{ z: Math.PI / 20 }, { z: -Math.PI / 20 },
+                        { z: Math.PI / 20 },{ z: -Math.PI / 20 }, { z: Math.PI / 20 },
+                        { z: -Math.PI / 20 },{ z: Math.PI / 20 }, { z: -Math.PI / 20 },
+                        { z: Math.PI / 20 },{ z: -Math.PI / 20 }, { z: Math.PI / 20 },
+                        { z: -Math.PI / 20 },{ z: Math.PI / 20 }, { z: -Math.PI / 20 },
+                        { z: Math.PI / 20 },{ z: -Math.PI / 20 }, { z: Math.PI / 20 },
+                        { z: -Math.PI / 20 },{ z: Math.PI / 20 }, { z: -Math.PI / 20 },
+                        { z: Math.PI / 20 },{ z: -Math.PI / 20 }, { z: Math.PI / 20 },
+                        { z: -Math.PI / 20 },{ z: Math.PI / 20 }, { z: -Math.PI / 20 },
+                        { z: Math.PI / 20 },{ z: -Math.PI / 20 }, { z: Math.PI / 20 },
+                        { z: -Math.PI / 20 },{ z: Math.PI / 20 }, { z: -Math.PI / 20 },
+                        { z: Math.PI / 20 },{ z: -Math.PI / 20 }, { z: Math.PI / 20 },
+                        { z: -Math.PI / 20 },{ z: Math.PI / 20 }, { z: -Math.PI / 20 },
+                        { z: Math.PI / 20 },{ z: -Math.PI / 20 }, { z: Math.PI / 20 },
+                        { z: -Math.PI / 20 },{ z: Math.PI / 20 }, { z: -Math.PI / 20 },
+                        { z: Math.PI / 20 }, { z: -Math.PI / 20 }, { z: 0 },
+                    ],
+                    target: penguin.rotation,
+                },
+            ],
+            loop: loopAnimation,
+            duration: duration * 1200,
+            easing: TWEEN.Easing.Quadratic.InOut,
+        });
+        walking.start();
     }
 }
 
@@ -154,8 +253,7 @@ function createScene(canvas) {
 
     // Add  a camera so we can view the scene
     camera = new THREE.PerspectiveCamera( 45, canvas.width / canvas.height, 1, 100000 );
-    camera.position.y = 600;
-    camera.position.z = 1000;
+    camera.position.set(-500, 2000, 0);
     camera.lookAt(scene.position);
     scene.add(camera);
 
@@ -169,15 +267,15 @@ function createScene(canvas) {
 
     // Create and add all the lights
     spotLight = new THREE.SpotLight (0x404040, 1);
-    spotLight.position.set(150, 600, 150);
+    spotLight.position.set(250, 1000, 250);
     spotLight.target.position.set(-2, 0, -2);
     spotLight.castShadow = true;
     root.add(spotLight);
 
     //Shadow Effects
-    spotLight.shadow.camera.near = 100;
-    spotLight.shadow. camera.far = 1000;
-    spotLight.shadow.camera.fov = 50;
+    spotLight.shadow.camera.near = 150;
+    spotLight.shadow. camera.far = 1500;
+    spotLight.shadow.camera.fov = 75;
     
     spotLight.shadow.mapSize.width = SHADOW_MAP_WIDTH;
     spotLight.shadow.mapSize.height = SHADOW_MAP_HEIGHT;
@@ -203,7 +301,7 @@ function createScene(canvas) {
 
     // let asteroid = new THREE.Object3D();
     // Put in a ground plane to show off the lighting
-    let geometry = new THREE.PlaneGeometry(1000, 1000 , 50, 50);
+    let geometry = new THREE.PlaneGeometry(1800, 1500 , 50, 50);
     let mesh = new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({color:color, map:map, side:THREE.DoubleSide}));
 
     mesh.rotation.x = -Math.PI / 2;
