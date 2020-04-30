@@ -1,4 +1,4 @@
-# A5: Robot Rush
+# A6: Robot Rush
 
 Assignment No 6 for the computer graphics course.
 
