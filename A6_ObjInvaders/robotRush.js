@@ -42,7 +42,7 @@ async function loadGLTF() {
 
     try {
         // Run_L, Threaten, back, idle
-        let result = await loader.load("robot/robot_run.gltf");
+        let result = await loader.load("../models/robot/robot_run.gltf");
 
         robot= result.scene.children[0];
         robot.scale.set(0.2, 0.2, 0.2);
