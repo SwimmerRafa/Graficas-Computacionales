@@ -2,13 +2,20 @@ let renderer = null,
 scene = null, 
 camera = null,
 root = null,
+robots = [],
+robot_actions={},
 robot = null,
+mouse = THREE.Vector2(), INTERSECTED, CLICKED,
 group = null,
-controls = null;
+mixer = null;
 let deadAnimator;
 let duration = 20000; // ms
 let currentTime = Date.now();
 let animation = "run";
+let directionalLight = null;
+let spotLight = null;
+let ambientLight = null;
+let mapUrl = "images/futground.jpg";
 
 function changeAnimation(animation_text) {
     robot_actions[animation].reset();
@@ -17,7 +24,7 @@ function changeAnimation(animation_text) {
 
     if(animation =="dead")
     {
-        createDeadAnimation();
+        deadAnimation();
     }
     else
     {
@@ -25,7 +32,7 @@ function changeAnimation(animation_text) {
     }
 }
 
-function createDeadAnimation() {
+function deadAnimation() {
 
 }
 
@@ -35,7 +42,6 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-
 async function loadGLTF() {
     let gltfLoader = new THREE.GLTFLoader();
     let loader = promisifyLoader(gltfLoader);
@@ -43,10 +49,11 @@ async function loadGLTF() {
     try {
         // Run_L, Threaten, back, idle
         let result = await loader.load("../models/robot/robot_run.gltf");
-
         robot= result.scene.children[0];
         robot.scale.set(0.2, 0.2, 0.2);
-        robot.position.y -=3.9;
+        robot.position.x =  - Math.random() * 8;
+        robot.position.y = - 4;
+        robot.position.z = -50 - Math.random() * 50;
         robot.traverse(child =>{
             if(child.isMesh)
             {
@@ -54,8 +61,10 @@ async function loadGLTF() {
                 child.receiveShadow = true;
             }
         });
-
         scene.add(robot);
+        mixer =  new THREE.AnimationMixer( scene );
+        robots.push(robot);
+        mixer.clipAction(result.animations[0], robot).setDuration(0.8).play();
     }
     catch(err)
     {
@@ -64,19 +73,46 @@ async function loadGLTF() {
 }
 
 function animate() {
-
     let now = Date.now();
     let deltat = now - currentTime;
     currentTime = now;
 
-    if(robot && robot_actions[animation])
-    {
-        robot_actions[animation].getMixer().update(deltat * 0.001);
+    if(mixer){
+        mixer.update( deltat * 0.001 );
     }
 
+    for(let robo of robots){
+        robo.position.z += 0.1 * deltat;
+        if(robo.position.z > 600){
+            robo.position.z = -70 - Math.random() * 1;
+        }
+    }
     if(animation =="dead")
     {
         KF.update();
+    }
+}
+
+function countdown() {
+    var seconds = 60;
+    function tick() {
+        var counter = document.getElementById("counter");
+        seconds--;
+        counter.innerHTML = "Time: " + (seconds <= 10 ? "0" : "") + String(seconds);
+        if( seconds >= 0 ) {
+            setTimeout(tick, 1000);
+        } else {
+            restart();
+        }
+    }
+    tick();
+}
+
+function restart() {
+    if (confirm("Do you want to restart the game?")) {
+        location.reload();
+    } else {
+        window.location.href = "Menu.html";
     }
 }
 
@@ -89,12 +125,6 @@ function run() {
     // Spin the cube for next frame
     animate();
 }
-
-let directionalLight = null;
-let spotLight = null;
-let ambientLight = null;
-let mapUrl = "images/futground.jpg";
-
 
 function createScene(canvas) {
     canvas.width = window.innerWidth;
@@ -124,11 +154,6 @@ function createScene(canvas) {
     camera.lookAt(scene.position);
     scene.add(camera);
 
-    //Controles
-    // controls = new THREE.OrbitControls(camera, renderer.domElement);
-    // controls.enableDamping = true;
-    // controls.damping = 0.2;
-        
     // Create a group to hold all the objects
     root = new THREE.Object3D;
 
@@ -175,4 +200,5 @@ function createScene(canvas) {
     // Now add the group to our scene
     scene.add( root );
     window.addEventListener('resize', onWindowResize, false);
+    countdown();
 }
