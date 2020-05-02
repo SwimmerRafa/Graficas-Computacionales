@@ -5,7 +5,6 @@ root = null,
 robot = null,
 group = null,
 controls = null;
-let blocker,  instructions;
 let deadAnimator;
 let duration = 20000; // ms
 let currentTime = Date.now();
@@ -36,13 +35,14 @@ function onWindowResize() {
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
+
 async function loadGLTF() {
     let gltfLoader = new THREE.GLTFLoader();
     let loader = promisifyLoader(gltfLoader);
 
     try {
         // Run_L, Threaten, back, idle
-        let result = await loader.load("../models/robot/robot_run.gltf");
+        let result = await loader.load("robot/robot_run.gltf");
 
         robot= result.scene.children[0];
         robot.scale.set(0.2, 0.2, 0.2);
@@ -93,7 +93,7 @@ function run() {
 let directionalLight = null;
 let spotLight = null;
 let ambientLight = null;
-let mapUrl = "../images/futground.jpg";
+let mapUrl = "images/futground.jpg";
 
 
 function createScene(canvas) {
@@ -106,7 +106,7 @@ function createScene(canvas) {
 
     //Background
     const loader = new THREE.TextureLoader();
-    loader.load('../images/back.jpg' , function(texture)
+    loader.load('images/back.jpg' , function(texture)
     {
         scene.background = texture;
     });

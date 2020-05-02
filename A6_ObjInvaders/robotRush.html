@@ -6,7 +6,8 @@
 <link rel="stylesheet" href="../libs/jquery-ui/jquery-ui.css" />
 <link rel="stylesheet" href="../css/main.css" />
 <link rel="stylesheet" href="../css/threejsshadows.css" />
-
+<link rel="stylesheet" href="../css/threejsPointerLock.css" />
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="../libs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
 <script src="../libs/jquery-ui/jquery-ui.js"></script>
 
@@ -61,10 +62,16 @@ function initControls()
 
 <body>
 
-
 <div id="container">
     <canvas id="webglcanvas" width=800 height=600></canvas>
-	<div id="title" style="color:yellow;font-size:30px;">3D Zerg Rush </div>
+	<div id="title" style="color:yellow;font-size:30px;">
+        <h1>Zerg Rush</h1>
+        <div align="right">
+            <h3>Score: </h3>
+            <h3>Time: </h3>
+        </div>
+    </div>
+
 </div>
 
 </body>
