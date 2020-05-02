@@ -5,13 +5,10 @@ root = null,
 robot = null,
 group = null,
 controls = null;
-
-let robot_actions = {};
+let blocker,  instructions;
 let deadAnimator;
-
 let duration = 20000; // ms
 let currentTime = Date.now();
-
 let animation = "run";
 
 function changeAnimation(animation_text) {
@@ -98,7 +95,6 @@ let spotLight = null;
 let ambientLight = null;
 let mapUrl = "../images/futground.jpg";
 
-let SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 2048;
 
 function createScene(canvas) {
     canvas.width = window.innerWidth;
