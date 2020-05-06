@@ -1,6 +1,6 @@
 let container;
 let renderer = null,
-scene = null, 
+scene = null,
 camera = null,
 root = null,
 robots = [],
@@ -8,27 +8,28 @@ robot_actions={},
 robot = null,
 group = null,
 score = 0,
+time,
 mixer = null;
+let currentRobots = 0;
+let numRobots = 8;
 let mouse;
 let duration = 20000; // ms
 let currentTime = Date.now();
+let actual = Date.now();
 let animation = "run";
 let directionalLight = null;
 let spotLight = null;
 let robotGroup;
 let ambientLight = null;
 let mapUrl = "images/futground.jpg";
-let CLICKED = null, INTERSECTED = null;
+let CLICKED = null;
 let animator = null,
 loopAnimation = false;
 
 function changeAnimation(animation_text) {
-    robot_actions[animation].reset();
-    
     animation = animation_text;
 
-    if(animation =="dead")
-    {
+    if(animation =="dead") {
         deadAnimation();
     }
     else
@@ -71,7 +72,7 @@ async function loadGLTF() {
         let result = await loader.load("../models/robot/robot_run.gltf");
         robot= result.scene.children[0];
         robot.scale.set(0.2, 0.2, 0.2);
-        robot.position.x =  - Math.random() * 8;
+        robot.position.x =  Math.random() * (800 - (-800))+ (-800);
         robot.position.y = - 4;
         robot.position.z = -50 - Math.random() * 50;
         robot.traverse(child =>{
@@ -92,6 +93,11 @@ async function loadGLTF() {
     }
 }
 
+// function newBot() {
+//     let nuevo = robot.clone();
+//     robotGroup.add(nuevo);
+// }
+
 function animate() {
     let now = Date.now();
     let deltat = now - currentTime;
@@ -104,6 +110,9 @@ function animate() {
     for(let robo of robots){
         robo.position.z += 0.1 * deltat;
         if(robo.position.z > 600){
+            score--;
+            var scoreH = document.getElementById("score");
+            scoreH.innerHTML = "Score: " + score;
             robo.position.z = -70 - Math.random() * 1;
         }
     }
@@ -192,9 +201,6 @@ function createScene(canvas) {
 
     ambientLight = new THREE.AmbientLight ( 0xffffff, 1);
     root.add(ambientLight);
-    
-    // Create the objects
-    loadGLTF();
 
     // Create a group to hold the objects
     group = new THREE.Object3D;
@@ -220,7 +226,11 @@ function createScene(canvas) {
     mesh.receiveShadow = true;
     group.add( mesh );
     scene.add( root );
-    
+
+    //Clone robots
+    //setInterval(loadGLTF, 5000);
+    loadGLTF();
+
     // Now add the group to our scene
     scene.add( root );
     scene.add(robotGroup);
@@ -242,12 +252,11 @@ function getIntersects(x, y) {
     return raycaster.intersectObjects(robotGroup.children, true)
 }
 
-
 function onDocumentMouseDown(event) {
     event.preventDefault();
 
-    let intersects = getIntersects(event.layerX, event.layerY)
-    console.log(robot)
+    let intersects = getIntersects(event.clientX, event.clientY)
+    console.log(robotGroup);
     console.log("intersects", intersects);
     if ( intersects.length > 0 ) {
         CLICKED = intersects[ intersects.length - 1 ].object;
