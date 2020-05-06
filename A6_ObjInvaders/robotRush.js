@@ -1,21 +1,26 @@
-let renderer = null, 
+let container;
+let renderer = null,
 scene = null, 
 camera = null,
 root = null,
 robots = [],
 robot_actions={},
 robot = null,
-mouse = THREE.Vector2(), INTERSECTED, CLICKED,
 group = null,
+score = 0,
 mixer = null;
-let deadAnimator;
+let mouse;
 let duration = 20000; // ms
 let currentTime = Date.now();
 let animation = "run";
 let directionalLight = null;
 let spotLight = null;
+let robotGroup;
 let ambientLight = null;
 let mapUrl = "images/futground.jpg";
+let CLICKED = null, INTERSECTED = null;
+let animator = null,
+loopAnimation = false;
 
 function changeAnimation(animation_text) {
     robot_actions[animation].reset();
@@ -33,7 +38,22 @@ function changeAnimation(animation_text) {
 }
 
 function deadAnimation() {
-
+    animator = new KF.KeyFrameAnimator;
+    animator.init({
+        interps:
+            [
+                {
+                    keys:[0, .5, 1],
+                    values:[
+                        { y : 0 },
+                        { y : Math.PI  },
+                        { y : Math.PI * 278 },
+                    ],
+                },
+            ],
+        loop: loopAnimation,
+        duration:duration * 1000,
+    });
 }
 
 function onWindowResize() {
@@ -61,8 +81,8 @@ async function loadGLTF() {
                 child.receiveShadow = true;
             }
         });
-        scene.add(robot);
-        mixer =  new THREE.AnimationMixer( scene );
+        robotGroup.add(robot);
+        mixer =  new THREE.AnimationMixer( robotGroup );
         robots.push(robot);
         mixer.clipAction(result.animations[0], robot).setDuration(0.8).play();
     }
@@ -93,6 +113,10 @@ function animate() {
     }
 }
 
+function render() {
+    renderer.render( scene, camera );
+}
+
 function countdown() {
     var seconds = 60;
     function tick() {
@@ -118,12 +142,9 @@ function restart() {
 
 function run() {
     requestAnimationFrame(function() { run(); });
-    
-    // Render the scene
-    renderer.render( scene, camera );
-
     // Spin the cube for next frame
     animate();
+    render();
 }
 
 function createScene(canvas) {
@@ -179,6 +200,9 @@ function createScene(canvas) {
     group = new THREE.Object3D;
     root.add(group);
 
+    // Create a group to hold the objects
+    robotGroup = new THREE.Object3D;
+
     // Create a texture map
     let map = new THREE.TextureLoader().load(mapUrl);
     map.wrapS = map.wrapT = THREE.RepeatWrapping;
@@ -199,6 +223,41 @@ function createScene(canvas) {
     
     // Now add the group to our scene
     scene.add( root );
+    scene.add(robotGroup);
+    document.addEventListener('mousedown', onDocumentMouseDown);
     window.addEventListener('resize', onWindowResize, false);
     countdown();
+}
+
+function getIntersects(x, y) {
+    mouse = new THREE.Vector3();
+    x = (x / window.innerWidth) * 2 - 1;
+    y = -(y / window.innerHeight) * 2 + 1;
+    mouse.set(x, y);
+
+    //Update rays by camera and mouse position
+    raycaster.setFromCamera(mouse, camera);
+
+    // Return to the focus of objects and rays
+    return raycaster.intersectObjects(robotGroup.children, true)
+}
+
+
+function onDocumentMouseDown(event) {
+    event.preventDefault();
+
+    let intersects = getIntersects(event.layerX, event.layerY)
+    console.log(robot)
+    console.log("intersects", intersects);
+    if ( intersects.length > 0 ) {
+        CLICKED = intersects[ intersects.length - 1 ].object;
+        score ++;
+        var scoreH = document.getElementById("score");
+        scoreH.innerHTML = "Score: " + score;
+        CLICKED.material.emissive.setHex( 0x00ff00 );
+        console.log(CLICKED);
+    }
+    if ( CLICKED ){
+        CLICKED = null;
+    }
 }
