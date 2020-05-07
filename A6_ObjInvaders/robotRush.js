@@ -124,6 +124,10 @@ function animate() {
     indexCLicked = null;
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function render() {
     renderer.render( scene, camera );
 }
@@ -207,7 +211,7 @@ function createScene(canvas) {
     //load objects
     loadGLTF();
 
-    setInterval(loadGLTF, 3000)
+    setInterval(loadGLTF, 1500)
 
     // Create a group to hold the objects
     group = new THREE.Object3D;
