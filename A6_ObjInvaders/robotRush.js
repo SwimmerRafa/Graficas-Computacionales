@@ -10,10 +10,9 @@ group = null,
 score = 0,
 time,
 mixer = null;
-let currentRobots = 0;
-let numRobots = 8;
+let indexCLicked = null;
 let mouse;
-let duration = 20000; // ms
+let duration = 2000; // ms
 let currentTime = Date.now();
 let actual = Date.now();
 let animation = "run";
@@ -34,7 +33,8 @@ function changeAnimation(animation_text) {
     }
     else
     {
-         console.log(robot_actions[animation]);
+        robot.rotation.x = 0;
+        robot.position.y = 0;
     }
 }
 
@@ -44,16 +44,17 @@ function deadAnimation() {
         interps:
             [
                 {
-                    keys:[0, .5, 1],
+                    keys:[0, .33, .66, 1],
                     values:[
-                        { y : 0 },
-                        { y : Math.PI  },
-                        { y : Math.PI * 278 },
+                        { x: 1, y : Math.PI/2, z : 0 },
+                        { x: 1, y : Math.PI/2 * 4, z: Math.PI/6 },
+                        { x: 1, y : Math.PI/2 * 4, z: Math.PI/6 * 2},
+                        { x: 1, y : Math.PI/2 * 4, z: Math.PI/6 * 3 },
                     ],
                 },
             ],
         loop: loopAnimation,
-        duration:duration * 1000,
+        duration:duration,
     });
 }
 
@@ -74,7 +75,7 @@ async function loadGLTF() {
         robot.scale.set(0.2, 0.2, 0.2);
         robot.position.x =  Math.random() * (800 - (-800))+ (-800);
         robot.position.y = - 4;
-        robot.position.z = -50 - Math.random() * 50;
+        robot.position.z = -450;
         robot.traverse(child =>{
             if(child.isMesh)
             {
@@ -83,9 +84,9 @@ async function loadGLTF() {
             }
         });
         robotGroup.add(robot);
-        mixer =  new THREE.AnimationMixer( robotGroup );
+        robot.mixer =  new THREE.AnimationMixer( robotGroup );
         robots.push(robot);
-        mixer.clipAction(result.animations[0], robot).setDuration(0.8).play();
+        robot.mixer.clipAction(result.animations[0], robot).setDuration(0.8).play();
     }
     catch(err)
     {
@@ -93,33 +94,34 @@ async function loadGLTF() {
     }
 }
 
-// function newBot() {
-//     let nuevo = robot.clone();
-//     robotGroup.add(nuevo);
-// }
-
 function animate() {
     let now = Date.now();
     let deltat = now - currentTime;
     currentTime = now;
 
-    if(mixer){
-        mixer.update( deltat * 0.001 );
-    }
-
-    for(let robo of robots){
-        robo.position.z += 0.1 * deltat;
-        if(robo.position.z > 600){
+    for(let robo of robots) {
+        robo.mixer.update(deltat * 0.001);
+        robo.position.z += 0.2 * deltat;
+        if (robo.position.z > 600) {
             score--;
             var scoreH = document.getElementById("score");
             scoreH.innerHTML = "Score: " + score;
-            robo.position.z = -70 - Math.random() * 1;
+            var index = robots.indexOf(robo)
+            if (index > -1) {
+                robots.splice(index, 1);
+            }
+            robotGroup.remove(robo)
         }
     }
-    if(animation =="dead")
-    {
+    if(indexCLicked != null ) {
         KF.update();
+        var clickedRobot = robots[indexCLicked]
+        if (indexCLicked > -1) {
+            robots.splice(indexCLicked, 1);
+        }
+        robotGroup.remove(clickedRobot);
     }
+    indexCLicked = null;
 }
 
 function render() {
@@ -202,6 +204,11 @@ function createScene(canvas) {
     ambientLight = new THREE.AmbientLight ( 0xffffff, 1);
     root.add(ambientLight);
 
+    //load objects
+    loadGLTF();
+
+    setInterval(loadGLTF, 3000)
+
     // Create a group to hold the objects
     group = new THREE.Object3D;
     root.add(group);
@@ -227,16 +234,13 @@ function createScene(canvas) {
     group.add( mesh );
     scene.add( root );
 
-    //Clone robots
-    //setInterval(loadGLTF, 5000);
-    loadGLTF();
-
     // Now add the group to our scene
     scene.add( root );
     scene.add(robotGroup);
     document.addEventListener('mousedown', onDocumentMouseDown);
     window.addEventListener('resize', onWindowResize, false);
     countdown();
+    deadAnimation();
 }
 
 function getIntersects(x, y) {
@@ -256,17 +260,15 @@ function onDocumentMouseDown(event) {
     event.preventDefault();
 
     let intersects = getIntersects(event.clientX, event.clientY)
-    console.log(robotGroup);
     console.log("intersects", intersects);
     if ( intersects.length > 0 ) {
         CLICKED = intersects[ intersects.length - 1 ].object;
         score ++;
         var scoreH = document.getElementById("score");
         scoreH.innerHTML = "Score: " + score;
-        CLICKED.material.emissive.setHex( 0x00ff00 );
-        console.log(CLICKED);
+        CLICKED.material.emissive.setHex( 0xF11907 );
+        indexCLicked = robots.indexOf(CLICKED.parent);
     }
-    if ( CLICKED ){
-        CLICKED = null;
-    }
+
+    CLICKED = null;
 }
