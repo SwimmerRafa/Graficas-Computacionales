@@ -14,8 +14,7 @@ let indexCLicked = null;
 let mouse;
 let duration = 2000; // ms
 let currentTime = Date.now();
-let actual = Date.now();
-let animation = "run";
+let animation = "dead";
 let directionalLight = null;
 let spotLight = null;
 let robotGroup;
@@ -25,20 +24,9 @@ let CLICKED = null;
 let animator = null,
 loopAnimation = false;
 
-function changeAnimation(animation_text) {
-    animation = animation_text;
-
-    if(animation =="dead") {
-        deadAnimation();
-    }
-    else
-    {
-        robot.rotation.x = 0;
-        robot.position.y = 0;
-    }
-}
-
 function deadAnimation() {
+    console.log("FELIPE SE LA COME")
+    console.log(robots)
     animator = new KF.KeyFrameAnimator;
     animator.init({
         interps:
@@ -51,11 +39,14 @@ function deadAnimation() {
                         { x: 1, y : Math.PI/2 * 4, z: Math.PI/6 * 2},
                         { x: 1, y : Math.PI/2 * 4, z: Math.PI/6 * 3 },
                     ],
+                    target: robots[indexCLicked].rotation
                 },
             ],
         loop: loopAnimation,
         duration:duration,
+        easing: TWEEN.Easing.Linear.None,
     });
+    animator.start();
 }
 
 function onWindowResize() {
@@ -122,10 +113,6 @@ function animate() {
         robotGroup.remove(clickedRobot);
     }
     indexCLicked = null;
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function render() {
@@ -244,7 +231,6 @@ function createScene(canvas) {
     document.addEventListener('mousedown', onDocumentMouseDown);
     window.addEventListener('resize', onWindowResize, false);
     countdown();
-    deadAnimation();
 }
 
 function getIntersects(x, y) {
@@ -260,6 +246,10 @@ function getIntersects(x, y) {
     return raycaster.intersectObjects(robotGroup.children, true)
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function onDocumentMouseDown(event) {
     event.preventDefault();
 
@@ -272,7 +262,7 @@ function onDocumentMouseDown(event) {
         scoreH.innerHTML = "Score: " + score;
         CLICKED.material.emissive.setHex( 0xF11907 );
         indexCLicked = robots.indexOf(CLICKED.parent);
+        deadAnimation();
     }
-
     CLICKED = null;
 }
