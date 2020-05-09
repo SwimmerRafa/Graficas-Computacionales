@@ -11,7 +11,7 @@ time,
 mixer = null;
 let indexCLicked = null;
 let mouse;
-let duration = 2000; // ms
+let duration = 500; // ms
 let currentTime = Date.now();
 let directionalLight = null;
 let spotLight = null;
@@ -34,10 +34,10 @@ function deadAnimation(robot) {
                 {
                     keys:[0, .33, .66, 1],
                     values:[
-                        {  y : 250 },
-                        {  y : 500 },
-                        {  y : 750},
-                        {  y :1000 },
+                        {  y : 250 , z: -300},
+                        {  y : 500, z: -600 },
+                        {  y : 500,z: -900 },
+                        {  y :500, z : -1200},
                     ],
                     target: robot.position
                 },
@@ -95,7 +95,7 @@ async function animate() {
     for(let robo of robots) {
         if(robo.state === "running"){
             robo.mixer.update(deltat * 0.002);
-            robo.position.z += 0.2 * deltat;
+            robo.position.z += 0.15 * deltat;
         }
 
         if (robo.position.z > 600) {
@@ -206,7 +206,7 @@ function createScene(canvas) {
 
     //load objects
     loadGLTF();
-    setInterval(loadGLTF, 1500)
+    setInterval(loadGLTF, 1750)
 
     // Create a group to hold the objects
     group = new THREE.Object3D;
@@ -272,4 +272,3 @@ function onDocumentMouseDown(event) {
     }
     CLICKED = null;
 }
-
