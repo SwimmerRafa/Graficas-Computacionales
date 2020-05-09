@@ -27,7 +27,7 @@ async function sleep(target, ms) {
     setTimeout(()=>{target.state="dead";}, ms)
 }
 
-function deadAnimation() {
+function deadAnimation(robot) {
     animator = new KF.KeyFrameAnimator;
     animator.init({
         interps:
@@ -40,12 +40,15 @@ function deadAnimation() {
                         {  y : 750},
                         {  y :1000 },
                     ],
+                    target: robot.position
                 },
             ],
         loop: loopAnimation,
         duration:duration,
         easing: TWEEN.Easing.Linear.None,
     });
+
+    animator.start()
 }
 
 function onWindowResize() {
@@ -204,7 +207,7 @@ function createScene(canvas) {
 
     //load objects
     loadGLTF();
-    setInterval(loadGLTF, 3000)
+    setInterval(loadGLTF, 1500)
 
     // Create a group to hold the objects
     group = new THREE.Object3D;
@@ -237,7 +240,6 @@ function createScene(canvas) {
     document.addEventListener('mousedown', onDocumentMouseDown);
     window.addEventListener('resize', onWindowResize, false);
     countdown();
-    deadAnimation();
 }
 
 function getIntersects(x, y) {
@@ -267,15 +269,8 @@ function onDocumentMouseDown(event) {
         robots[indexCLicked].state = "dying"
         var scoreH = document.getElementById("score");
         scoreH.innerHTML = "Score: " + score;
-
-        if(!animator.running) {
-            animator.interps[0].target = robots[indexCLicked].position;
-        }
-        playAnimations()
+        deadAnimation( robots[indexCLicked] )
     }
     CLICKED = null;
 }
 
-function playAnimations() {
-    animator.start();
-}
