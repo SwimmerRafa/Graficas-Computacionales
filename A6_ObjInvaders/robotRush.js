@@ -4,7 +4,7 @@ scene = null,
 camera = null,
 root = null,
 robots = [],
-robot_actions={},
+deadTime,
 robot = null,
 group = null,
 score = 0,
@@ -14,7 +14,6 @@ let indexCLicked = null;
 let mouse;
 let duration = 2000; // ms
 let currentTime = Date.now();
-let animation = "dead";
 let directionalLight = null;
 let spotLight = null;
 let robotGroup;
@@ -24,9 +23,11 @@ let CLICKED = null;
 let animator = null,
 loopAnimation = false;
 
+async function sleep(target, ms) {
+    setTimeout(()=>{target.state="dead";}, ms)
+}
+
 function deadAnimation() {
-    console.log("FELIPE SE LA COME")
-    console.log(robots)
     animator = new KF.KeyFrameAnimator;
     animator.init({
         interps:
@@ -34,19 +35,17 @@ function deadAnimation() {
                 {
                     keys:[0, .33, .66, 1],
                     values:[
-                        { x: 1, y : Math.PI/2, z : 0 },
-                        { x: 1, y : Math.PI/2 * 4, z: Math.PI/6 },
-                        { x: 1, y : Math.PI/2 * 4, z: Math.PI/6 * 2},
-                        { x: 1, y : Math.PI/2 * 4, z: Math.PI/6 * 3 },
+                        {  y : 250 },
+                        {  y : 500 },
+                        {  y : 750},
+                        {  y :1000 },
                     ],
-                    target: robots[indexCLicked].rotation
                 },
             ],
         loop: loopAnimation,
         duration:duration,
         easing: TWEEN.Easing.Linear.None,
     });
-    animator.start();
 }
 
 function onWindowResize() {
@@ -67,6 +66,7 @@ async function loadGLTF() {
         robot.position.x =  Math.random() * (800 - (-800))+ (-800);
         robot.position.y = - 4;
         robot.position.z = -450;
+        robot.state = "running"
         robot.traverse(child =>{
             if(child.isMesh)
             {
@@ -85,33 +85,39 @@ async function loadGLTF() {
     }
 }
 
-function animate() {
+async function animate() {
     let now = Date.now();
     let deltat = now - currentTime;
     currentTime = now;
 
     for(let robo of robots) {
-        robo.mixer.update(deltat * 0.001);
-        robo.position.z += 0.2 * deltat;
+        if(robo.state === "running"){
+            robo.mixer.update(deltat * 0.002);
+            robo.position.z += 0.2 * deltat;
+        }
+
         if (robo.position.z > 600) {
-            score--;
-            var scoreH = document.getElementById("score");
-            scoreH.innerHTML = "Score: " + score;
             var index = robots.indexOf(robo)
             if (index > -1) {
                 robots.splice(index, 1);
             }
             robotGroup.remove(robo)
+            score--;
+            var scoreH = document.getElementById("score");
+            scoreH.innerHTML = "Score: " + score;
         }
-    }
-    if(indexCLicked != null ) {
-        KF.update();
-        var clickedRobot = robots[indexCLicked]
-        if (indexCLicked > -1) {
-            robots.splice(indexCLicked, 1);
+
+        if(robo.state ==="dying" ) {
+            await sleep(robo, 500);
         }
-        robotGroup.remove(clickedRobot);
+
+        if(robo.state === "dead"){
+            robotGroup.remove(robo)
+        }
+        indexCLicked = null;
+
     }
+
     indexCLicked = null;
 }
 
@@ -146,6 +152,7 @@ function run() {
     requestAnimationFrame(function() { run(); });
     // Spin the cube for next frame
     animate();
+    KF.update();
     render();
 }
 
@@ -197,8 +204,7 @@ function createScene(canvas) {
 
     //load objects
     loadGLTF();
-
-    setInterval(loadGLTF, 1500)
+    setInterval(loadGLTF, 3000)
 
     // Create a group to hold the objects
     group = new THREE.Object3D;
@@ -231,6 +237,7 @@ function createScene(canvas) {
     document.addEventListener('mousedown', onDocumentMouseDown);
     window.addEventListener('resize', onWindowResize, false);
     countdown();
+    deadAnimation();
 }
 
 function getIntersects(x, y) {
@@ -246,23 +253,29 @@ function getIntersects(x, y) {
     return raycaster.intersectObjects(robotGroup.children, true)
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 function onDocumentMouseDown(event) {
     event.preventDefault();
 
     let intersects = getIntersects(event.clientX, event.clientY)
     console.log("intersects", intersects);
     if ( intersects.length > 0 ) {
+
         CLICKED = intersects[ intersects.length - 1 ].object;
-        score ++;
-        var scoreH = document.getElementById("score");
-        scoreH.innerHTML = "Score: " + score;
         CLICKED.material.emissive.setHex( 0xF11907 );
         indexCLicked = robots.indexOf(CLICKED.parent);
-        deadAnimation();
+        score ++;
+        robots[indexCLicked].state = "dying"
+        var scoreH = document.getElementById("score");
+        scoreH.innerHTML = "Score: " + score;
+
+        if(!animator.running) {
+            animator.interps[0].target = robots[indexCLicked].position;
+        }
+        playAnimations()
     }
     CLICKED = null;
+}
+
+function playAnimations() {
+    animator.start();
 }
