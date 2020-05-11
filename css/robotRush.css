@@ -1,0 +1,78 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0 !important;
+    overflow-y: hidden;
+    font-family: Monospace, serif;
+}
+
+#timer {
+    position: absolute;
+    color: white;
+    font-size: 15pt;
+    top: 5px;
+    left: 20px;
+    font-weight: bold;
+    display: none;
+}
+
+#score {
+    position: absolute;
+    color: white;
+    font-size: 15pt;
+    top: 30px;
+    left: 20px;
+    font-weight: bold;
+    display: none;
+}
+
+#end {
+    position: absolute;
+    color: white;
+    font-size: 45pt;
+    margin: 0 auto;
+    top: 20px;
+    left: 20px;
+    font-weight: bold;
+    display: none;
+}
+
+.give-it-top-space {
+    top: 55px !important;
+}
+
+#start {
+    position: absolute;
+    font-family: Monospace, serif;
+    font-size: 25pt;
+    font-weight: bold;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    color: white;
+    top: 20px;
+    left: 20px;
+}
+
+.is-underline {
+    text-decoration: underline;
+}
+
+#hint {
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    top: 50px;
+    left: 30px;
+}
+
+#restart {
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    top: 85px;
+    left: 20px;
+    display: none;
+    cursor: pointer;
+}
